@@ -244,6 +244,28 @@ def _inject_unassigned(
     cand.extend(fits[:cap])
     return cand
 
+def _inject_from_pool(
+    assigned: List[InstancePart],
+    pool_remaining: List[InstancePart],
+    rect: Rect,
+    cap: int,
+) -> List[InstancePart]:
+    """Inject additional candidates from the *global* remaining pool.
+
+    Prevents the hybrid failure mode where a big block zone is left empty
+    because suitable parts were pre-assigned to other zones.
+    """
+    cand = list(assigned)
+    if cap <= 0 or not pool_remaining:
+        return cand
+
+    have = {p.uid for p in cand}
+    fits = [p for p in pool_remaining if p.uid not in have and _part_fits_rect(p, rect.w, rect.h)]
+    fits.sort(key=lambda p: p.w * p.h, reverse=True)
+    cand.extend(fits[:cap])
+    return cand
+
+
 
 # ----------------------------
 # Two-level cut patterns (3 zones)
@@ -381,8 +403,19 @@ def _build_sheet_for_pattern(
 
     for zi, z in zone_order:
         rect = rects[zi]
-        assigned_parts = by_zone.get(z.id, [])
-        candidates = _inject_unassigned(assigned_parts, unassigned, rect, cap=int(params.inject_unassigned_cap))
+        assigned_parts = [p for p in by_zone.get(z.id, []) if p.uid in remaining_global]
+
+        # Global pool of still-unplaced parts (key to filling big empty gaps)
+        pool_remaining = [p for p in parts if p.uid in remaining_global]
+
+        # Strip zones are kept strict (only their assigned parts), block zones may 'top up'
+        if z.kind == "strip":
+            candidates = assigned_parts
+        else:
+            candidates = _inject_from_pool(
+                assigned_parts, pool_remaining, rect, cap=int(params.inject_unassigned_cap)
+            )
+
 
         pls_local, rem_local, cuts_local = _pack_zone_shelves(rect, candidates, params, time_limit_s=t_zone)
 
