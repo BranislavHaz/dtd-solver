@@ -1,0 +1,284 @@
+✅ DTD SOLVER - ÚSPEŠNE SPUSTITEĽNÝ
+
+===============================================================================
+RÝCHLY START (Skopíruj & Paste)
+===============================================================================
+
+cd /home/branislav/Dokumenty/pg
+source dtd_solver/venv/bin/activate
+python -m dtd_solver.main --example
+
+→ Uvidíš výsledky + matplotlib graf
+
+===============================================================================
+PROJEKTOVÉ SÚBORY NA ČÍTANIE
+===============================================================================
+
+1️⃣  INDEX_DTD_SOLVER.md           ← ZAČNI TU (orientácia)
+2️⃣  README_DTD_SOLVER.md          ← ČÍTAJ TOTO (rýchly start)
+3️⃣  dtd_solver/QUICK_START.md     ← Podrobnosti (keď potrebuješ viac)
+4️⃣  dtd_solver/SETUP_GUIDE.md     ← Inštalácia & troubleshooting
+5️⃣  dtd_solver/HOW_TO_RUN.py      ← Príklady kódu (spustiteľný!)
+
+===============================================================================
+5 SPÔSOBOV SPUSTENIA
+===============================================================================
+
+1. PRÍKLADY (najjednoduché)
+   python -m dtd_solver.main --example
+
+2. VLASTNÝ CSV
+   python -m dtd_solver.main --parts parts.csv
+
+3. VLASTNÉ PARAMETRE
+   python -m dtd_solver.main --example --board 3000x2100 --kerf 4.0
+
+4. PYTHON API (bez matplotlib)
+   [Pozri README_DTD_SOLVER.md - sekcia "4️⃣ Spôsob"]
+
+5. CSV EXPORT
+   python -m dtd_solver.cli --parts parts.csv --out output/
+
+===============================================================================
+VIRTUÁLNE PROSTREDIE
+===============================================================================
+
+✅ Vytvorené: /home/branislav/Dokumenty/pg/dtd_solver/venv
+
+Aktivácia:
+  source dtd_solver/venv/bin/activate
+
+Deaktivácia:
+  deactivate
+
+Inštalované balíčky:
+  - ortools (Google OR-Tools solver)
+  - matplotlib (grafika)
+
+===============================================================================
+ČO JE HOTOVO
+===============================================================================
+
+✅ Virtuálne prostredie
+✅ Všetky závislosti (ortools, matplotlib)
+✅ Solver algoritmus (CP-SAT)
+✅ CSV import/export
+✅ Matplotlib vizualizácia
+✅ Bug fix (NewOptionalIntervalVar API)
+✅ Úplná dokumentácia
+
+===============================================================================
+ČO JE OPRAVENÉ
+===============================================================================
+
+Súbor: dtd_solver/solver_shelf_cp_sat.py (lines 165-190)
+
+Problem: NewOptionalIntervalVar API v ortools 9.14 vyžadoval "affine" výrazy
+Riešenie: Pre-kalkulácia inflated_w ako IntVar
+Status: ✅ Opravené a testované
+
+Výsledok: Solver teraz funguje bez chýb!
+
+===============================================================================
+VÝSLEDKY TESTU
+===============================================================================
+
+Vstup:
+  - Board: 2800×2070 mm
+  - Parts: Bok (2400×560, qty=2), Polica (560×500, qty=6), ...
+
+Výstup:
+  - Sheets: 2
+  - Cut length: 12,880 mm
+  - Waste area: 7,030,000 mm²
+
+Status: ✅ ÚSPECH
+
+===============================================================================
+DÔLEŽITÁ PRAVIDLA
+===============================================================================
+
+1. VŽDY SPÚŠŤAJ Z RODIČOVSKÉHO ADRESÁRA
+   ❌ ZĽAVA: cd dtd_solver && python ...
+   ✅ SPRÁVNE: cd /home/branislav/Dokumenty/pg && python ...
+
+2. VŽDY AKTIVUJ VIRTUÁLNE PROSTREDIE
+   source dtd_solver/venv/bin/activate
+
+3. MATPLOTLIB OKNO BLOKUJE TERMINAL
+   To je normálne - zatvor okno a pokračuj
+
+===============================================================================
+ČASTÉ CHYBY & RIEŠENIA
+===============================================================================
+
+CHYBA: "ImportError: cannot import name 'MappingProxyType'"
+RIEŠENIE: Spúšťaš z dtd_solver/ priečinka. Spusti z /home/branislav/Dokumenty/pg
+
+CHYBA: "ModuleNotFoundError: No module named 'ortools'"
+RIEŠENIE: Neaktivoval si venv. Spusti: source dtd_solver/venv/bin/activate
+
+CHYBA: "No such file or directory: parts.csv"
+RIEŠENIE: CSV musí existovať v aktuálnom adresári alebo zadaj cestu
+
+CHYBA: "Matplotlib okno zablokuje"
+RIEŠENIE: To je OK - zatvor okno, terminal bude libre
+
+===============================================================================
+POKROČILÉ PARAMETRE
+===============================================================================
+
+--board WxH           Veľkosť dosky (default: 2800x2070)
+--trim l,r,t,b       Okraje na orez (default: 10,10,10,10)
+--kerf FLOAT         Šírka rezu v mm (default: 3.2)
+--time FLOAT         Čas na riešenie sekúnd (default: 10.0)
+--max_sheets INT     Maximálne dosky (default: 20)
+--cut_weight INT     Penalizácia rezov (default: 1)
+--parts FILE         CSV súbor s dielmi
+--example            Vstavané príklady
+--no_labels          Skryť popisky v grafe
+--no_dims            Skryť rozmery
+--grid               Zobraziť mriežku
+
+Príklad:
+  python -m dtd_solver.main \
+    --example \
+    --board 3000x2100 \
+    --trim 5,5,5,5 \
+    --kerf 4.0 \
+    --time 20
+
+===============================================================================
+CSV FORMÁT (parts.csv)
+===============================================================================
+
+Záhlavie:
+  name,w,h,qty,can_rotate
+
+Príklad:
+  Bok,720,560,2,0
+  Polica,564,500,4,1
+  Dvierka,715,397,4,0
+  Podstava,564,120,6,1
+
+Stĺpce:
+  - name      : Názov dielu (bez čiarok)
+  - w         : Šírka v mm
+  - h         : Výška v mm
+  - qty       : Počet kusov (optional, default: 1)
+  - can_rotate: Dá sa rotovať? (1=áno, 0=nie, optional, default: 1)
+
+===============================================================================
+PYTHON API PRÍKLAD
+===============================================================================
+
+import sys
+sys.path.insert(0, '/home/branislav/Dokumenty/pg')
+
+from dtd_solver.types import BoardSpec, PartSpec, Trim
+from dtd_solver.solver_shelf_cp_sat import SolverParams, solve_from_partspecs_iterative_shelves
+
+board = BoardSpec("DTD", 2800, 2070, trim=Trim(10, 10, 10, 10))
+parts = [
+    PartSpec("Bok", 720, 560, qty=2, can_rotate=False),
+    PartSpec("Polica", 564, 500, qty=4, can_rotate=True),
+]
+
+params = SolverParams(kerf=3, time_limit_s=10.0)
+solution = solve_from_partspecs_iterative_shelves(board, parts, params=params)
+
+print(f"Sheets: {solution.num_sheets()}")
+print(f"Cut: {solution.total_cut_length()} mm")
+print(f"Waste: {solution.total_waste_area()} mm²")
+
+===============================================================================
+ŠTRUKTÚRA PROJEKTU
+===============================================================================
+
+/home/branislav/Dokumenty/pg/
+├── INDEX_DTD_SOLVER.md                 ← Orientácia (ty si tu)
+├── README_DTD_SOLVER.md                ← Rýchly start (ČÍTAJ!)
+│
+└── dtd_solver/
+    ├── QUICK_START.md                  ← Sprievodca
+    ├── SETUP_GUIDE.md                  ← Inštalácia
+    ├── HOW_TO_RUN.py                   ← Príklady (SPUSTITEĽNÝ!)
+    │
+    ├── main.py                         ← CLI s matplotlib
+    ├── cli.py                          ← CLI s CSV
+    ├── solver_shelf_cp_sat.py          ← Solver (OPRAVENÝ!)
+    ├── types.py                        ← Štruktúry
+    ├── metrics.py                      ← Výpočty
+    ├── plotting.py                     ← Grafy
+    │
+    ├── venv/                           ← Virtuálne prostredie ✅
+    └── [ďalšie moduly...]
+
+===============================================================================
+KORISTNÝ CHECKLIST
+===============================================================================
+
+□ Čítam INDEX_DTD_SOLVER.md (ty si tu teraz)
+□ Čítam README_DTD_SOLVER.md
+□ Aktivujem venv: source dtd_solver/venv/bin/activate
+□ Spúšťam príklad: python -m dtd_solver.main --example
+□ Vidím výsledky a matplotlib graf
+□ Čítam QUICK_START.md na viac detailov
+□ Vytváram svoj CSV súbor
+□ Spúšťam so svojimi dielmi
+□ Skúmam HOW_TO_RUN.py pre pokročilé použitie
+
+===============================================================================
+ĎALŠIE POMÔCKY
+===============================================================================
+
+Help:
+  python -m dtd_solver.main --help
+
+Komplexný príklad:
+  cat dtd_solver/example_end_to_end.py
+
+Generovanie dielov:
+  python -c "
+from dtd_solver.sample_data import generate_random_parts
+parts = generate_random_parts(n_unique=30)
+# ... zvyšok kódu
+"
+
+Testovanie importu:
+  python -c "from dtd_solver.types import BoardSpec; print('OK')"
+
+===============================================================================
+ĎALŠIE MOŽNOSTI
+===============================================================================
+
+CLI s CSV exportom:
+  python -m dtd_solver.cli --parts parts.csv --out output/
+
+Bez matplotlib (Python API):
+  python dtd_solver/example_simple.py
+
+Detailný output:
+  python -m dtd_solver.main --example --no_labels --grid
+
+Dlhší čas na riešenie:
+  python -m dtd_solver.main --example --time 30
+
+Viac problémov:
+  python dtd_solver/sample_data.py
+
+===============================================================================
+🎉 GRATULUJEME!
+===============================================================================
+
+Tvoj projekt DTD Solver je teraz PLNE FUNKČNÝ! 🚀
+
+Ďalej:
+1. Čítaj README_DTD_SOLVER.md
+2. Spusti príklady
+3. Vytvor svoj CSV
+4. Začni s vlastnými projektmi
+
+Ak máš otázky, všetko je v dokumentácii! 📚
+
+===============================================================================

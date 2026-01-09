@@ -1,0 +1,22 @@
+Help on method new_optional_interval_var in module ortools.sat.python.cp_model:
+
+nneeww__ooppttiioonnaall__iinntteerrvvaall__vvaarr(start: Union[ortools.sat.python.cp_model_helper.LinearExpr, ForwardRef('IntVar'), int, numpy.int8, numpy.uint8, numpy.int32, numpy.uint32, numpy.int64, numpy.uint64], size: Union[ortools.sat.python.cp_model_helper.LinearExpr, ForwardRef('IntVar'), int, numpy.int8, numpy.uint8, numpy.int32, numpy.uint32, numpy.int64, numpy.uint64], end: Union[ortools.sat.python.cp_model_helper.LinearExpr, ForwardRef('IntVar'), int, numpy.int8, numpy.uint8, numpy.int32, numpy.uint32, numpy.int64, numpy.uint64], is_present: Union[ortools.sat.python.cp_model_helper.Literal, int, numpy.int8, numpy.uint8, numpy.int32, numpy.uint32, numpy.int64, numpy.uint64, bool], name: str) -> ortools.sat.python.cp_model.IntervalVar method of ortools.sat.python.cp_model.CpModel instance
+    Creates an optional interval var from start, size, end, and is_present.
+
+    An optional interval variable is a constraint, that is itself used in other
+    constraints like NoOverlap. This constraint is protected by a presence
+    literal that indicates if it is active or not.
+
+    Internally, it ensures that `is_present` implies `start + size ==
+    end`.
+
+    Args:
+      start: The start of the interval. It must be of the form a * var + b.
+      size: The size of the interval. It must be of the form a * var + b.
+      end: The end of the interval. It must be of the form a * var + b.
+      is_present: A literal that indicates if the interval is active or not. A
+        inactive interval is simply ignored by all constraints.
+      name: The name of the interval variable.
+
+    Returns:
+      An `IntervalVar` object.
