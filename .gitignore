@@ -5,7 +5,7 @@ dtd_solver/__pycache__/
 
 # Virtual envs
 .venv/
-dtd_solver/venv/
+venv/
 env/
 ENV/
 
@@ -38,5 +38,6 @@ Thumbs.db
 output/
 results/
 runs/
+*.png
 *.pdf
 *.csv
