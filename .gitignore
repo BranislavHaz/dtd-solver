@@ -1,1 +1,42 @@
-__pycache__/*
+# Python bytecode
+dtd_solver/__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual envs
+.venv/
+dtd_solver/venv/
+env/
+ENV/
+
+# Caches / tests
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.cache/
+.coverage
+htmlcov/
+
+# Build
+build/
+dist/
+*.egg-info/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs / temp
+*.log
+*.tmp
+*.bak
+*.swp
+
+# Generated outputs (solver results)
+output/
+results/
+runs/
+*.pdf
+*.csv
