@@ -119,7 +119,6 @@ def main(argv: Optional[list[str]] = None) -> None:
             region_max_shelves=int(args.max_shelves),
             inject_unassigned_cap=int(args.inject),
             max_patterns_per_sheet=int(args.patterns),
-            waste_tie_mm2=int(args.waste_tie),
         )
         sol = solve_iterative_hybrid_twolevel(board, parts, params=hp)
     elif args.mode == "global":

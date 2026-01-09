@@ -3,10 +3,10 @@
   "items": [
     {
       "id": "Vysoka_skrina_bok",
-      "w": 2100,
-      "h": 580,
+      "w": 580,
+      "h": 2000,
       "count": 2,
-      "can_rotate": true
+      "can_rotate": false
     },
     {
       "id": "Vysoka_skrina_polica",
